@@ -1,54 +1,62 @@
-const course = 'Half Stack application development'
-const part1 = 'Fundamentals of React'
-const exercises1 = 10
-const part2 = 'Using props to pass data'
-const exercises2 = 7
-const part3 = 'State of a component'
-const exercises3 = 14
-
-const Header = () => {
+const Header = (course) => {
   return(
-    <>
-      <h1>{course}</h1>
-    </>
+    <div>
+      <h1>{course.course}</h1>
+    </div>
   )
 }
 
-const Part = (part) => {
+const Content = (parts) => {
   return(
-    <>
-      <p> This is part "{part.number}", with {part.amount} exercises.</p>
-    </>
+    <div>
+      <p>In this course you will learn:</p>
+
+      <ul>
+        <li> {parts.parts[0].name}, {parts.parts[0].exercises} exercises </li>
+        <li> {parts.parts[1].name}, {parts.parts[1].exercises} exercises </li>
+        <li> {parts.parts[2].name}, {parts.parts[2].exercises} exercises </li>
+      </ul>
+    </div>
   )
 }
 
-const Content = () => {
+const Total = (parts) => {
+  const total = parts.parts[0].exercises + parts.parts[1].exercises + parts.parts[2].exercises
   return(
-    <>
-      <Part number={part1} amount={exercises1} />
-      <Part number={part2} amount={exercises2} />
-      <Part number={part3} amount={exercises3} />
-    </>
-  )
-}
-
-const Total = () => {
-  return(
-    <>
-      <p>With total of exercises {exercises1 + exercises2 + exercises3}</p>
-    </>
+    <div>
+      <p>Totalling as much as {total} exercises!</p>
+    </div>
   )
 }
 
 const App = () => {
+  const course = {
+    name: 'Half Stack application development',
+    parts: [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        name: 'State of a component',
+        exercises: 14
+      }
+    ]
+  }
   
   return (
     <div>
-      <Header course={course} />
-      <Content />
-      <Total />
+      <Header course={course.name} />
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
 
 export default App
+
+
