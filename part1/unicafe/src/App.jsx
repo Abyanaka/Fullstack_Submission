@@ -5,19 +5,49 @@ const Header = () => <h1>give feedback</h1>
 const Button = ({ onClick, text}) => <button onClick={onClick}>{text}</button>
 
 const Statistics = (props) => {
+  if (props.all === 0) {
+    return (
+      <div>
+        <h1> statistics </h1>
+        <p> No feedback given </p>
+      </div>
+    )
+  }
+
   return (
     <div>
-
       <h1> statistics </h1>
-      <p> good {props.good} </p>
-      <p> neutral {props.neutral} </p>
-      <p> bad {props.bad} </p>
-      <p> all {props.bad} </p>
-      <p> average {props.average / props.all}</p>
-      <p> positive {props.positive} % </p>
+      <table>
+        <tbody>
+          <StatisicLine text = "good" value = {props.good} />
+          <StatisicLine text = "neutral" value = {props.neutral} />
+          <StatisicLine text = "bad" value = {props.bad} />
+          <StatisicLine text = "all" value = {props.all} />
+          <StatisicLine text = "average" value = {props.average / props.all} />
+          <StatisicLine text = "positive" value = {props.positive} />
+        </tbody>
+      </table>
 
     </div>
 
+  )
+}
+
+const StatisicLine = ({ text, value }) => {
+  if (text === "positive") {
+    return(
+      <tr>
+        <td>{text}</td>
+        <td>{value} %</td>
+      </tr>
+    )
+
+  }
+  return(
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
@@ -28,7 +58,6 @@ const App = () => {
   const [average, setAvg] = useState(0)
   const [all, setAll] = useState(0)
 
-  // const all = good + neutral + bad
   const positive = (good / all) * 100
   
   const handlerGoodClick = () => {
