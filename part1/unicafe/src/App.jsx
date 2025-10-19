@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const Header = () => <h1>give feedback</h1>
 
-const Button = ({ onClick, text}) => <button onClick={onClick}>{text}</button>
+const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const Statistics = (props) => {
   if (props.all === 0) {
