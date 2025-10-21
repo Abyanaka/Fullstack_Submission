@@ -47,6 +47,7 @@ const App = () => {
   const handleNextAnecdote = () => {
     const next = pnrg()
     setSelected(next)
+    
   }
 
   const handleVote = () => {
