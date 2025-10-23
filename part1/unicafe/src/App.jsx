@@ -95,7 +95,6 @@ const App = () => {
     const updatedBad = good + 1
     const updatedAvg= average - 1
     const updatedAll= updatedBad + neutral + bad
-
     setBad(updatedBad)
     console.log('Bad', updatedBad)
 
