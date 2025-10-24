@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import contactService from './service/contact'
 import Filter from './component/Filter'
 import PersonForm from './component/PersonForm'
 import Persons from './component/Persons'
@@ -26,40 +26,73 @@ const App = () => {
   }
 
   const addNumber = (event) => {
-  event.preventDefault()
-  console.log(newName)
+    event.preventDefault()
 
-  if(newName === '' || newNumber === ''){
-    alert ("all fields need to be filled")
-    return
-  }
-  
-  const checkNewName = persons.some(p => p.name === newName)
-  const checkNewNumber = persons.some(p => p.number === newNumber)
-  console.log('exists?', checkNewName)
-
-  if (checkNewName){
-    alert(newName + " is already added to phonebook")
-    return
-  }
-
-  if (checkNewNumber){
-    alert(newNumber + " is already added to phonebook")
-    return
-  }
-
-  else{
-    const numberObject = {
-    id: persons.length + 1,
-    name: newName,
-    number : newNumber
+    if (newName.trim() === '' || newNumber.trim() === '') {
+      alert('all fields need to be filled')
+      return
     }
 
-    setPersons(persons.concat(numberObject))
-    setNewName('')
-    setNewNumber('')
+    const existing = persons.some(p => p.name === newName)
+    console.log(existing)
+
+    if (existing) {
+      const confirmed = window.confirm(
+        `${newName} is already added to phonebook. Replace the old number with the new one?`
+      )
+
+      if (confirmed) {
+        const changedPerson = { ...existing, number: newNumber }
+        contactService
+          .update(existing.id, changedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== existing.id ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            console.error('update failed', error)
+            alert(`Information of ${newName} has already been removed from server`)
+            setPersons(persons.filter(p => p.id !== existing.id))
+          })
+      }
+
+      return
     }
 
+    const numberExists = persons.some(p => p.number === newNumber)
+    if (numberExists) {
+      alert(`${newNumber} is already added to phonebook`)
+      return
+    }
+
+    const numberObject = { name: newName, number: newNumber }
+
+    contactService
+      .create(numberObject)
+      .then(returnedContact => {
+        setPersons(persons.concat(returnedContact))
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
+  const handleDelete = id => {
+    const person = persons.find(p => p.id === id)
+
+    if (!person) return
+
+    if (!window.confirm(`Delete ${person.name}?`)) return
+
+    contactService
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+      .catch(error => {
+        console.error('delete failed', error)
+        alert(`Failed to delete ${person.name}`)
+      })
   }
 
   const numbersToShow = filterName.trim() === ''
@@ -68,18 +101,19 @@ const App = () => {
 
   useEffect(() => {
       console.log('effect=')
-      axios
-        .get('http://localhost:3001/persons')
-        .then(response => {
-          console.log('promise fulfilled')
-          setPersons(response.data)
+      contactService
+        .getAll()
+        .then(initialContacts => {
+          // console.log('promise fulfilled')
+          // contactService.getAll() already returns response.data
+          setPersons(initialContacts)
         })
     }, [])
-    console.log('render', numbersToShow.length, 'contacts')
+    // console.log('render', numbersToShow.length, 'contacts')
   return (
     
     <div>
-      debug: {newName}
+      {/* debug: {newName} */}
       <h2>Phonebook</h2>
 
       <Filter onChange={handleFilterChange} value={filterName} />
@@ -96,7 +130,10 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons show={numbersToShow} />  
+      <Persons
+        onDelete={handleDelete}
+        show={numbersToShow}
+      />
       
     </div>
   )
