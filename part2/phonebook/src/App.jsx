@@ -33,16 +33,17 @@ const App = () => {
       return
     }
 
-    const existing = persons.some(p => p.name === newName)
-    console.log(existing)
+    const existing = persons.find(p => p.name === newName)
+    // console.log(existing)
 
     if (existing) {
       const confirmed = window.confirm(
-        `${newName} is already added to phonebook. Replace the old number with the new one?`
+        `${newName} is already added to phonebook. Replace the old number with this instead?`
       )
 
       if (confirmed) {
         const changedPerson = { ...existing, number: newNumber }
+        // console.log('changed person:', existing.id)
         contactService
           .update(existing.id, changedPerson)
           .then(returnedPerson => {
@@ -100,7 +101,7 @@ const App = () => {
     : persons.filter(p => p.name.toLowerCase().includes(filterName.toLowerCase()))
 
   useEffect(() => {
-      console.log('effect=')
+      // console.log('effect=')
       contactService
         .getAll()
         .then(initialContacts => {
