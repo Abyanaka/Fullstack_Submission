@@ -3,12 +3,20 @@ import contactService from './service/contact'
 import Filter from './component/Filter'
 import PersonForm from './component/PersonForm'
 import Persons from './component/Persons'
+import Notification from './component/Notification'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [notification, setNotification] = useState(null)
+
+  const showNotification = (message, type = 'error', duration = 5000) => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), duration)
+  }
 
   const handleFilterChange = (event) => {
     // console.log(event.target.value)
@@ -48,12 +56,16 @@ const App = () => {
           .update(existing.id, changedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== existing.id ? p : returnedPerson))
+
+            showNotification(`Updated ${newName}'s number`, 'success')
+
             setNewName('')
             setNewNumber('')
           })
           .catch(error => {
             console.error('update failed', error)
-            alert(`Information of ${newName} has already been removed from server`)
+            // alert(`Information of ${newName} has already been removed from server`)
+            showNotification(`Information of ${newName} has already been removed from server`, 'error')
             setPersons(persons.filter(p => p.id !== existing.id))
           })
       }
@@ -73,8 +85,15 @@ const App = () => {
       .create(numberObject)
       .then(returnedContact => {
         setPersons(persons.concat(returnedContact))
+
+        showNotification(`New contact has been added to the Numbers list`, 'success')
         setNewName('')
         setNewNumber('')
+        
+      }).catch(error =>{
+        console.error(error)
+        showNotification(`Failed to add the new contact`, 'error')
+
       })
   }
 
@@ -89,10 +108,11 @@ const App = () => {
       .remove(id)
       .then(() => {
         setPersons(persons.filter(p => p.id !== id))
+        showNotification(`${person.name}'s contact has been deleted`, 'success')
       })
       .catch(error => {
         console.error('delete failed', error)
-        alert(`Failed to delete ${person.name}`)
+        showNotification(`Failed to delete ${person.name}`, 'error')
       })
   }
 
@@ -116,6 +136,7 @@ const App = () => {
     <div>
       {/* debug: {newName} */}
       <h2>Phonebook</h2>
+      <Notification message={notification?.message} type={notification?.type} />
 
       <Filter onChange={handleFilterChange} value={filterName} />
 
