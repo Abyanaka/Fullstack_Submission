@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 
+app.use(express.static('dist'))
 app.use(express.json())
 
 morgan.token('body', (req) => {
@@ -34,7 +35,8 @@ let persons = [
 ]
 
 app.get('/info', (request, response) => {
-  response.send('<phonebook has info for ' + persons.length + ' people</p><p>' + new Date() + '</p>')
+  response.send('<phonebook has info for ' 
+    + persons.length + ' people</p><p>' + new Date() + '</p>')
 })
 
 app.get('/api/persons', (request, response) => {
@@ -104,7 +106,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

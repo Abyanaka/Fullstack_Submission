@@ -1,0 +1,1 @@
+exercise 3.10 - 3.11 is unable to be accomplished due to unavailibity of credit card
