@@ -65,7 +65,7 @@ const App = () => {
           .catch(error => {
             console.error('update failed', error)
             // alert(`Information of ${newName} has already been removed from server`)
-            showNotification(`Information of ${newName} has already been removed from server`, 'error')
+            showNotification(`Update Failed or Information of ${newName} has already been removed from server`, 'error')
             setPersons(persons.filter(p => p.id !== existing.id))
           })
       }

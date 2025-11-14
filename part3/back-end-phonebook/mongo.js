@@ -1,10 +1,7 @@
 const mongoose = require('mongoose')
 
 
-const password = process.argv[2]
-const url = 
-`mongodb+srv://abe_fullstack_db:${password}@cluster0.kq5ajkv.mongodb.net/phoneBookApp?retryWrites=true&w=majority&appName=Cluster0`
-// const url = `mongodb+srv://abe_fullstack_db:${password}@cluster0.kq5ajkv.mongodb.net/?appName=Cluster0`
+const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery',false)
 
