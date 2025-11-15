@@ -92,7 +92,8 @@ const App = () => {
         
       }).catch(error =>{
         console.error(error)
-        showNotification(`Failed to add the new contact`, 'error')
+        // console.log(error.response.data.error)
+        showNotification(error.response.data.error, 'error')
 
       })
   }
